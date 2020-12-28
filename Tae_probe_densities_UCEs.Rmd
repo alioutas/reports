@@ -1,0 +1,96 @@
+---
+title: "Tae UCE Probe Densities"
+author: "Antonios Lioutas"
+date: "6/29/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+```{r setup, include=FALSE,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+### UCE probe densities
+Tae asked me to calculate the probe densities of UCE flanking regions. 
+She provided me .bed files contained the intersected balanced probes.
+
+Regions were **25**, **50** and **100** Kb.
+
+#### File names:
+
+```{r files_list, echo=FALSE}
+
+list.files("/Users/alioutas/Dropbox (HMS)/UCEs_library/", pattern = "intersected")
+```
+
+
+```{r import_files,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
+# import files
+
+uce_25 <- read_tsv("/Users/alioutas/Dropbox (HMS)/UCEs_library/Intersected_bedfiles/25kb_intersected.bed",col_names = FALSE)
+uce_50 <- read_tsv("/Users/alioutas/Dropbox (HMS)/UCEs_library/Intersected_bedfiles/50kb_intersected.bed",col_names = FALSE)
+uce_100 <- read_tsv("/Users/alioutas/Dropbox (HMS)/UCEs_library/Intersected_bedfiles/100kb_intersected.bed",col_names = FALSE)
+
+
+names(uce_100) <- c("chr", "reg_start", "reg_end", "chr_1", "start", "end", "sequence", "Temp")
+names(uce_50) <- c("chr", "reg_start", "reg_end", "chr_1", "start", "end", "sequence", "Temp")
+names(uce_25) <- c("chr", "reg_start", "reg_end", "chr_1", "start", "end", "sequence", "Temp")
+
+```
+
+### UCE oligopaints density 100Kb
+
+```{r UCE_100,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
+
+uce_100_stats <- uce_100 %>% 
+  mutate(name = str_c(chr, ":" ,reg_start,"-", reg_end)) %>%
+  group_by(name) %>%
+        summarise(n = n(), size_kb = round((max(end) - min(start))/1000), density_kb = round(n/size_kb, digits =1))
+uce_100_stats
+
+
+
+plot(density(uce_100_stats$density_kb), frame = FALSE, col = "red", 
+     main = "100Kb oligopaints density") 
+
+
+```
+
+### UCE oligopaints density 50Kb
+
+```{r UCE_50,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
+uce_50_stats <- uce_50 %>% 
+  mutate(name = str_c(chr, ":" ,reg_start,"-", reg_end)) %>%
+  group_by(name) %>%
+        summarise(n = n(), size_kb = round((max(end) - min(start))/1000), density_kb = round(n/size_kb, digits =1))
+uce_50_stats
+
+plot(density(uce_50_stats$density_kb), frame = FALSE, col = "red", 
+     main = "50Kb oligopaints density") 
+```
+
+### UCE oligopaints density 25Kb
+
+```{r UCE_25,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
+
+uce_25_stats <- uce_25 %>% 
+  mutate(name = str_c(chr, ":" ,reg_start,"-", reg_end)) %>%
+  group_by(name) %>%
+        summarise(n = n(), size_kb = round((max(end) - min(start))/1000), density_kb = round(n/size_kb, digits =1))
+uce_25_stats
+
+plot(density(uce_25_stats$density_kb), frame = FALSE, col = "red", 
+     main = "25Kb oligopaints density") 
+```
+
+
+```{r save_files, echo = F, message=FALSE, error=FALSE, warning=FALSE}
+
+#write_tsv(uce_100_stats,path = "~/Dropbox (HMS)/UCEs_library/100Kb_stats.bed", col_names = T)
+#write_tsv(uce_50_stats,path = "~/Dropbox (HMS)/UCEs_library/50Kb_stats.bed", col_names = T)
+#write_tsv(uce_25_stats,path = "~/Dropbox (HMS)/UCEs_library/25Kb_stats.bed", col_names = T)
+
+```
