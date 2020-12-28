@@ -1,11 +1,17 @@
 ---
 title: "Tae UCE Probe Densities"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Antonios Lioutas"
 date: "6/29/2020"
 output:
   html_document:
     df_print: paged
   word_document: default
+  
 ---
 
 ```{r setup, include=FALSE,  echo = F, message=FALSE, error=FALSE, warning=FALSE}
